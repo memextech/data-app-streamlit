@@ -458,4 +458,5 @@ genai.configure(api_key=st.secrets["gemini"]["GOOGLE_API_KEY"])
 ```
 
 # Streamlit API Notes
-- `use_container_width` is deprecated and will be removed in a future release. For `use_container_width=True`, use `width="stretch"`. For `use_container_width=False`, use `width="content"`.
+- Usage of `use_container_width` argument in `st.some_component(...)` is deprecated and this applies to all `st.` components. 
+- For examples, instead of `st.button(..., use_container_width=True)`, use `st.button(..., width="stretch")`. Or instead of `st.dataframe(..., use_container_width=False)`, use `st.dataframe(..., width="content")`. Width must be either an integer (pixels), 'stretch', or 'content', never NONE.
