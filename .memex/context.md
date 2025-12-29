@@ -43,20 +43,18 @@ The secrets_utils.py expands these automatically at startup.
 ## Connector Types
 
 ### supabase
-Install: `uv add st-supabase-connection supabase`
+Install: `uv add st-supabase-connection`
 secrets.toml:
 ```toml
 [connections.supabase]
-url = "$SUPABASE_URL"
-key = "$SUPABASE_KEY"
+SUPABASE_URL = "$SUPABASE_URL"
+SUPABASE_KEY = "$SUPABASE_KEY"
 ```
 Usage:
 ```python
-from supabase import create_client
-url = st.secrets["connections"]["supabase"]["url"]
-key = st.secrets["connections"]["supabase"]["key"]
-client = create_client(url, key)
-result = client.table("table_name").select("*").execute()
+from st_supabase_connection import SupabaseConnection
+conn = st.connection("supabase", type=SupabaseConnection)
+rows = conn.query("*", table="mytable", ttl="10m").execute()
 ```
 
 ### neon
@@ -104,7 +102,7 @@ spreadsheet = "$GOOGLE_SHEET_URL"
 ```
 Usage:
 ```python
-from st_gsheets_connection import GSheetsConnection
+from streamlit_gsheets import GSheetsConnection
 conn = st.connection("gsheets", type=GSheetsConnection)
 df = conn.read()
 ```
@@ -128,7 +126,7 @@ client_x509_cert_url = "$GCP_CLIENT_X509_CERT_URL"
 ```
 Usage:
 ```python
-from st_gsheets_connection import GSheetsConnection
+from streamlit_gsheets import GSheetsConnection
 conn = st.connection("gsheets", type=GSheetsConnection)
 df = conn.read()
 ```
