@@ -10,11 +10,35 @@ Start script runs `uv sync` and `uv run`
 
 # Data Sources
 
-## Setup Pattern
-Available connectors are listed in the system prompt under "Available Connectors" with their type and secret keys.
-1. Add connection config to `.streamlit/secrets.toml` using `$SECRET_KEY` references from the connector
-2. `setup_secrets()` is already called in `app.py` at startup - no additional setup needed do not remove
-3. Use the connector-specific code pattern based on the connector type
+## CRITICAL: Read Before Implementation
+
+1. **ALWAYS check this context.md file before implementing any feature**
+2. **NEVER implement custom solutions for patterns documented here**
+3. **ALWAYS use st.secrets for credentials, NEVER os.getenv()**
+
+## Data Source Implementation - MANDATORY PATTERN
+
+**CRITICAL**: ALL data source implementations MUST use Streamlit's st.connection pattern.
+DO NOT implement custom connection code with gspread, psycopg2, etc.
+
+### When implementing ANY data source:
+1. Available connectors are listed in the system prompt under "Available Connectors" with their type and secret keys.
+1. Check if a Streamlit connection exists for that source
+2. Install the appropriate st-* connection package
+3. Add connection config to `.streamlit/secrets.toml` using `$SECRET_KEY` references from the connector
+4. Use st.connection() - NEVER custom clients
+5. `setup_secrets()` is already called in `app.py` at startup - no additional setup needed do not remove
+6. Use the connector-specific code pattern below based on the connector type
+
+## Secret/Credential Access
+
+**ALWAYS use st.secrets - NEVER use os.getenv() or environment variables directly**
+
+✅ Correct: `spreadsheet_url = st.secrets["connections"]["gsheets"]["spreadsheet"]`
+❌ Wrong: `spreadsheet_url = os.getenv("SAMPLE_SPREADSHEET")`
+
+Secrets are configured in `.streamlit/secrets.toml` and ALWAYS should reference env vars with `$VAR_NAME` syntax.
+The secrets_utils.py expands these automatically at startup.
 
 ## Connector Types
 
@@ -71,7 +95,7 @@ df = conn.query("SELECT * FROM dataset.table")
 ```
 
 ### google_sheet_public
-Option A - Using st.connection:
+Using st.connection:
 Install: `uv add st-gsheets-connection`
 secrets.toml:
 ```toml
