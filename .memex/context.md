@@ -76,8 +76,10 @@ SUPABASE_KEY = "$SUPABASE_KEY"
 Usage:
 ```python
 from st_supabase_connection import SupabaseConnection
+import pandas as pd
 conn = st.connection("supabase", type=SupabaseConnection)
-rows = conn.query("*", table="mytable", ttl="10m").execute()
+result = conn.client.table("mytable").select("*").execute()
+df = pd.DataFrame(result.data)
 ```
 
 ### neon
