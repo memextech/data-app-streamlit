@@ -22,10 +22,10 @@ Start script runs `uv sync` and `uv run`
 DO NOT implement custom connection code with gspread, psycopg2, etc.
 
 ### When implementing ANY data source:
-1. Available connectors are listed in the system prompt under "Available Connectors" with their type and secret keys.
+1. Available connectors are listed in the system prompt under "Available Connectors" with their type and secret keys that match environment variables.
 1. Check if a Streamlit connection exists for that source
 2. Install the appropriate st-* connection package
-3. Add connection config to `.streamlit/secrets.toml` using `$SECRET_KEY` references from the connector
+3. Add connection config to `.streamlit/secrets.toml` using exact secret keys / env vars references from the connector
 4. Use st.connection() - NEVER custom clients
 5. `setup_secrets()` is already called in `app.py` at startup - no additional setup needed do not remove
 6. Use the connector-specific code pattern below based on the connector type
@@ -111,10 +111,33 @@ token_uri = "https://oauth2.googleapis.com/token"
 auth_provider_x509_cert_url = "https://www.googleapis.com/oauth2/v1/certs"
 client_x509_cert_url = "$GCP_CLIENT_X509_CERT_URL"
 ```
+
+**Note**: The `secrets_utils.py` automatically handles converting literal `\n` in the private_key to actual newlines.
+
 Usage:
 ```python
-conn = st.connection("bigquery")
-df = conn.query("SELECT * FROM dataset.table")
+from google.oauth2 import service_account
+from google.cloud import bigquery
+import pandas as pd
+
+# Create API client
+credentials = service_account.Credentials.from_service_account_info(
+    st.secrets["gcp_service_account"]
+)
+client = bigquery.Client(credentials=credentials)
+
+# Perform query
+@st.cache_data(ttl=600)
+def run_query(query):
+    query_job = client.query(query)
+    rows_raw = query_job.result()
+    # Convert to list of dicts for caching
+    rows = [dict(row) for row in rows_raw]
+    return rows
+
+# Use the query
+rows = run_query("SELECT * FROM `dataset.table` LIMIT 1000")
+df = pd.DataFrame(rows)
 ```
 
 ### google_sheet_public
