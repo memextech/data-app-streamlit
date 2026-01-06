@@ -63,6 +63,35 @@ def load_data(_conn, table_name):
 ### Underscore prefix (_conn)
 Tells Streamlit not to hash this parameter when caching. Use for connection objects passed to cached functions.
 
+## File Uploads
+
+When the user mentions a file using the `@filename` syntax (file-mention), the agent must:
+
+1. Extract the file label and path from the mention
+2. Add the file to `.streamlit/secrets.toml` under `[files]`:
+   ```toml
+   [files]
+   "my file name.csv" = "/data/users/.../uploads/my file name.csv"
+   ```
+3. Access the file path in code using `st.secrets["files"]["my file name.csv"]`
+4. Load the file using pandas or appropriate library:
+   ```python
+   import pandas as pd
+
+   path = st.secrets["files"]["my file name.csv"]
+   df = pd.read_csv(path)
+   ```
+
+### File mention format
+File mentions appear in prompts as:
+```html
+<span data-file-mention="" class="file-mention" data-id="..." data-label="my file name.csv.csv" data-path="/data/users/.../uploads/my file name.csv.csv">my file name.csv.csv</span>
+```
+
+Extract:
+- **data-label**: Use as the key in `[files]`
+- **data-path**: Use as the value (the actual file path)
+
 ## Connector Types
 
 ### supabase
