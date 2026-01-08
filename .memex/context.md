@@ -39,6 +39,7 @@ DO NOT implement custom connection code with gspread, psycopg2, etc.
 
 Secrets are configured in `.streamlit/secrets.toml` and ALWAYS should reference env vars with `$VAR_NAME` syntax.
 The secrets_utils.py expands these automatically at startup.
+Only replace values starting with `$` with the connector's secret keys/env vars. Keep literal values like `"service_account"` or URLs unchanged.
 
 ## Caching Strategy
 
