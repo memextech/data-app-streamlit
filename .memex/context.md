@@ -9,13 +9,16 @@ Use `start.sh`
 Start script runs `uv sync` and `uv run`
 
 # GitHub Setup
-If a GitHub Connector is available (listed in "Available Connectors" in system prompt), use it. Otherwise, prompt the user to set up a GitHub Connector.
+If a GitHub Connector is available (listed in "Available Connectors" in system prompt), use it. Otherwise, prompt the user to set up a GitHub Connector in Hub (instead of asking for secret directly).
 
 When adding a git remote, ALWAYS use HTTPS URL with token (never SSH):
+
+1. **Find the connector's secret key**: Check "Available Connectors" in system prompt for the exact secret key name (e.g., "PREFIX_GITHUB_TOKEN")
+2. **Use that exact secret key**: Replace `{GITHUB_CONNECTOR_TOKEN}` with the actual secret key from step 1
+
 ```bash
-git remote add origin https://[$GITHUB_TOKEN]@github.com/[REPO-OWNER]/[REPO-NAME]
+git remote add origin https://[GITHUB_CONNECTOR_TOKEN]@github.com/[REPO-OWNER]/[REPO-NAME]
 ```
-Replace `[$GITHUB_TOKEN]` with secret value from the GitHub Connector.
 
 # Data Sources
 
