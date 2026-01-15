@@ -40,7 +40,7 @@ def setup_secrets():
     secrets_singleton._secrets = expanded_secrets
 
 
-def get_oauth_access_token(prefix: str) -> str:
+def get_oauth_access_token(connector_id: str) -> str:
     """Fetch fresh OAuth access token from Modal backend.
 
     This function is used by Streamlit apps to get access tokens for
@@ -48,8 +48,7 @@ def get_oauth_access_token(prefix: str) -> str:
     (~1 hour) and should be fetched fresh when needed.
 
     Args:
-        prefix: The OAuth connector prefix (e.g., from st.secrets["gdrive"]["prefix"])
-                This is the connector prefix like "MYDRIV".
+        connector_id: The OAuth connector ID (e.g., from st.secrets["gdrive"]["connector_id"])                     
 
     Returns:
         Access token string for use with provider APIs (Google Drive, etc.)
@@ -59,8 +58,8 @@ def get_oauth_access_token(prefix: str) -> str:
         httpx.HTTPStatusError: If the backend request fails
 
     Example:
-        >>> prefix = st.secrets["gdrive"]["prefix"]  # e.g., "MYDRIV"
-        >>> access_token = get_oauth_access_token(prefix)
+        >>> connector_id = st.secrets["gdrive"]["connector_id"]  # UUID
+        >>> access_token = get_oauth_access_token(connector_id)
         >>> # Use with Google Drive API
         >>> from google.oauth2.credentials import Credentials
         >>> creds = Credentials(token=access_token)
@@ -85,7 +84,7 @@ def get_oauth_access_token(prefix: str) -> str:
         )
 
     response = httpx.get(
-        f"{backend_url}/deployments/connectors/{prefix}/access_token",
+        f"{backend_url}/deployments/connectors/{connector_id}/access_token",
         headers={"Authorization": f"Bearer {token}"},
         timeout=30.0,
     )
