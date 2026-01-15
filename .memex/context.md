@@ -469,6 +469,45 @@ import google.generativeai as genai
 genai.configure(api_key=st.secrets["gemini"]["GOOGLE_API_KEY"])
 ```
 
+### gdrive (Google Drive - OAuth)
+**Note**: This is an OAuth connector. Unlike other connectors, credentials are NOT stored in secrets.toml.
+The deployment system automatically injects the necessary environment variables.
+
+Install: `uv add google-api-python-client google-auth`
+secrets.toml:
+```toml
+[gdrive]
+connector_id = "$GDRIVE_CONNECTOR_ID"
+```
+Usage:
+```python
+from secrets_utils import get_oauth_access_token
+from google.oauth2.credentials import Credentials
+from googleapiclient.discovery import build
+import streamlit as st
+
+# Get fresh access token from backend
+connector_id = st.secrets["gdrive"]["connector_id"]
+access_token = get_oauth_access_token(connector_id)
+
+# Create Google Drive client
+creds = Credentials(token=access_token)
+drive = build("drive", "v3", credentials=creds)
+
+# List files
+@st.cache_data(ttl=300)  # Cache for 5 minutes
+def list_files():
+    results = drive.files().list(pageSize=10).execute()
+    return results.get("files", [])
+
+files = list_files()
+for file in files:
+    st.write(f"{file['name']} ({file['id']})")
+```
+
+**Important**: The `get_oauth_access_token()` function fetches a fresh access token (~1 hour lifetime) from the Modal backend.
+The `MEMEX_DEPLOYMENT_TOKEN` and `MEMEX_BACKEND_URL` environment variables are auto-injected when the deployment includes OAuth connectors.
+
 # Streamlit API Notes
 - Usage of `use_container_width` argument in `st.some_component(...)` is deprecated and this applies to all `st.` components. 
 - For examples, instead of `st.button(..., use_container_width=True)`, use `st.button(..., width="stretch")`. Or instead of `st.dataframe(..., use_container_width=False)`, use `st.dataframe(..., width="content")`. Width must be either an integer (pixels), 'stretch', or 'content', never NONE.
