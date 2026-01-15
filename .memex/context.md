@@ -477,8 +477,10 @@ Install: `uv add google-api-python-client google-auth`
 secrets.toml:
 ```toml
 [gdrive]
-connector_id = "$CONNECTOR_ID"
+prefix = "$<PREFIX>"
 ```
+**Note**: Replace `<PREFIX>` with your connector's prefix shown in Hub (e.g., `$MYDRIV`).
+
 Usage:
 ```python
 from secrets_utils import get_oauth_access_token
@@ -486,9 +488,10 @@ from google.oauth2.credentials import Credentials
 from googleapiclient.discovery import build
 import streamlit as st
 
-# Get fresh access token from backend
-connector_id = st.secrets["gdrive"]["connector_id"]
-access_token = get_oauth_access_token(connector_id)
+# Get connector prefix from secrets
+prefix = st.secrets["gdrive"]["prefix"]
+# Fetch fresh access token from backend
+access_token = get_oauth_access_token(prefix)
 
 # Create Google Drive client
 creds = Credentials(token=access_token)
