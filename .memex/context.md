@@ -477,7 +477,7 @@ Install: `uv add google-api-python-client google-auth`
 secrets.toml:
 ```toml
 [gdrive]
-connector_id = "$GDRIVE_CONNECTOR_ID"
+connector_id = "$CONNECTOR_ID"
 ```
 Usage:
 ```python
