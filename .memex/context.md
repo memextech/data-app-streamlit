@@ -434,7 +434,7 @@ graphname = "$GRAPHNAME"
 - ❌ **DO NOT** use `conn.getSchema()` - it returns a list with unexpected structure
 - ✅ **DO** use `conn.getVertexTypes()` and `conn.getEdgeTypes()` to get graph schema information
 - Use `conn.getVertexCount(vertex_type)` and `conn.getEdgeCount(edge_type)` for statistics
-- Use `conn.getVertices(vertex_type, limit=N)` to fetch sample vertices
+- Use `conn.getVertices(vertex_type, limit=N)` to fetch sample vertices (returns a **list**, not a dict)
 
 Usage:
 ```python
@@ -499,7 +499,7 @@ def get_vertex_stats(_conn):
         stats[v_type] = _conn.getVertexCount(v_type)
     return stats
 
-# Get sample vertices
+# Get sample vertices (returns list)
 @st.cache_data(ttl=600)
 def get_sample_vertices(_conn, v_type, limit=10):
     return _conn.getVertices(v_type, limit=limit)
@@ -512,7 +512,14 @@ def get_data(_conn, query_name):
 
 # Example usage
 stats = get_vertex_stats(conn)
-vertices = get_sample_vertices(conn, "User", limit=20)
+vertices = get_sample_vertices(conn, "User", limit=20)  # Returns list of vertex objects
+
+# Process vertices (list format)
+for vertex in vertices:
+    vertex_id = vertex.get("v_id")
+    attributes = vertex.get("attributes", {})
+    # Process each vertex...
+
 data = get_data(conn, "queryName")
 ```
 
