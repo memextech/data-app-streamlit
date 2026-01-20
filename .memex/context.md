@@ -394,22 +394,26 @@ workbooks_names = run_query()
 ```
 
 ### tidb
-Install: `uv add mysqlclient sqlalchemy`
+Install: `uv add pymysql sqlalchemy`
 secrets.toml:
 ```toml
 [connections.tidb]
 dialect = "mysql"
+driver = "pymysql"
 host = "$HOST"
 port = "$PORT"
 database = "$DATABASE"
 username = "$USERNAME"
 password = "$PASSWORD"
+create_engine_kwargs = { connect_args = { ssl_verify_cert = true, ssl_verify_identity = true } }
 ```
 Usage:
 ```python
 conn = st.connection('tidb', type='sql')
 df = conn.query('SELECT * from mytable;', ttl=600)
 ```
+
+**Note**: TiDB Cloud requires SSL connections. Use PyMySQL instead of mysqlclient as it's a pure Python implementation that doesn't require system-level MySQL client libraries.
 
 ### tigergraph
 Install: `uv add pyTigerGraph`
