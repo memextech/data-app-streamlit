@@ -430,6 +430,12 @@ graphname = "$GRAPHNAME"
 - **TigerGraph Cloud (Savannah)**: hostname contains `.tgcloud.io`, password field contains the GSQL secret
 - **Self-hosted**: traditional username/password with secret creation
 
+**Schema Access Pattern**:
+- ❌ **DO NOT** use `conn.getSchema()` - it returns a list with unexpected structure
+- ✅ **DO** use `conn.getVertexTypes()` and `conn.getEdgeTypes()` to get graph schema information
+- Use `conn.getVertexCount(vertex_type)` and `conn.getEdgeCount(edge_type)` for statistics
+- Use `conn.getVertices(vertex_type, limit=N)` to fetch sample vertices
+
 Usage:
 ```python
 import pyTigerGraph as tg
@@ -481,12 +487,32 @@ def get_tigergraph_connection():
 
 conn = get_tigergraph_connection()
 
-# Query data with caching
+# Get schema information (CORRECT METHOD)
+vertex_types = conn.getVertexTypes()  # Returns list of vertex type names
+edge_types = conn.getEdgeTypes()      # Returns list of edge type names
+
+# Get statistics
+@st.cache_data(ttl=600)
+def get_vertex_stats(_conn):
+    stats = {}
+    for v_type in _conn.getVertexTypes():
+        stats[v_type] = _conn.getVertexCount(v_type)
+    return stats
+
+# Get sample vertices
+@st.cache_data(ttl=600)
+def get_sample_vertices(_conn, v_type, limit=10):
+    return _conn.getVertices(v_type, limit=limit)
+
+# Query installed queries with caching
 @st.cache_data(ttl=600)
 def get_data(_conn, query_name):
-    result = _conn.runInstalledQuery(query_name)[0]
+    result = _conn.runInstalledQuery(query_name)
     return result
 
+# Example usage
+stats = get_vertex_stats(conn)
+vertices = get_sample_vertices(conn, "User", limit=20)
 data = get_data(conn, "queryName")
 ```
 
