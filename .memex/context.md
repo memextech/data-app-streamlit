@@ -232,7 +232,13 @@ AWS_DEFAULT_REGION = "$AWS_DEFAULT_REGION"
 Usage:
 ```python
 from st_files_connection import FilesConnection
-conn = st.connection('s3', type=FilesConnection)
+conn = st.connection(
+        's3',
+        type=FilesConnection,
+        key=st.secrets["AWS_ACCESS_KEY_ID"],
+        secret=st.secrets["AWS_SECRET_ACCESS_KEY"],
+        client_kwargs={'region_name': st.secrets["AWS_DEFAULT_REGION"]}
+    )
 df = conn.read("testbucket/myfile.csv", input_format="csv", ttl=600)
 ```
 
@@ -388,22 +394,26 @@ workbooks_names = run_query()
 ```
 
 ### tidb
-Install: `uv add mysqlclient sqlalchemy`
+Install: `uv add pymysql sqlalchemy`
 secrets.toml:
 ```toml
 [connections.tidb]
 dialect = "mysql"
+driver = "pymysql"
 host = "$HOST"
 port = "$PORT"
 database = "$DATABASE"
 username = "$USERNAME"
 password = "$PASSWORD"
+create_engine_kwargs = { connect_args = { ssl_verify_cert = true, ssl_verify_identity = true } }
 ```
 Usage:
 ```python
 conn = st.connection('tidb', type='sql')
 df = conn.query('SELECT * from mytable;', ttl=600)
 ```
+
+**Note**: TiDB Cloud requires SSL connections. Use PyMySQL instead of mysqlclient as it's a pure Python implementation that doesn't require system-level MySQL client libraries.
 
 ### tigergraph
 Install: `uv add pyTigerGraph`
@@ -468,6 +478,47 @@ Usage:
 import google.generativeai as genai
 genai.configure(api_key=st.secrets["gemini"]["GOOGLE_API_KEY"])
 ```
+
+### gdrive (Google Drive - OAuth)
+**Note**: This is an OAuth connector. Unlike other connectors, credentials are NOT stored in secrets.toml.
+The deployment system automatically injects the necessary environment variables.
+
+Install: `uv add google-api-python-client google-auth`
+secrets.toml:
+```toml
+[gdrive]
+connector_id = "$PREFIX_CONNECTOR_ID"  # Replace PREFIX with your connector's 6-char prefix (e.g., $MYDRIV_CONNECTOR_ID)
+```
+
+Usage:
+```python
+from secrets_utils import get_oauth_access_token
+from google.oauth2.credentials import Credentials
+from googleapiclient.discovery import build
+import streamlit as st
+
+# Get connector ID from secrets
+connector_id = st.secrets["gdrive"]["connector_id"]
+# Fetch fresh access token from backend
+access_token = get_oauth_access_token(connector_id)
+
+# Create Google Drive client
+creds = Credentials(token=access_token)
+drive = build("drive", "v3", credentials=creds)
+
+# List files
+@st.cache_data(ttl=300)  # Cache for 5 minutes
+def list_files():
+    results = drive.files().list(pageSize=10).execute()
+    return results.get("files", [])
+
+files = list_files()
+for file in files:
+    st.write(f"{file['name']} ({file['id']})")
+```
+
+**Important**: The `get_oauth_access_token()` function fetches a fresh access token (~1 hour lifetime) from the Modal backend.
+The `MEMEX_DEPLOYMENT_TOKEN` and `MEMEX_BACKEND_URL` environment variables are auto-injected when the deployment includes OAuth connectors.
 
 # Streamlit API Notes
 - Usage of `use_container_width` argument in `st.some_component(...)` is deprecated and this applies to all `st.` components. 
