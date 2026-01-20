@@ -232,7 +232,18 @@ AWS_DEFAULT_REGION = "$AWS_DEFAULT_REGION"
 Usage:
 ```python
 from st_files_connection import FilesConnection
-conn = st.connection('s3', type=FilesConnection)
+
+@st.cache_resource
+def get_s3_connection():
+    return st.connection(
+        's3',
+        type=FilesConnection,
+        key=st.secrets["AWS_ACCESS_KEY_ID"],
+        secret=st.secrets["AWS_SECRET_ACCESS_KEY"],
+        client_kwargs={'region_name': st.secrets["AWS_DEFAULT_REGION"]}
+    )
+
+conn = get_s3_connection()
 df = conn.read("testbucket/myfile.csv", input_format="csv", ttl=600)
 ```
 
