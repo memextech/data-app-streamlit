@@ -422,22 +422,72 @@ secrets.toml:
 [tigergraph]
 host = "$HOST"
 username = "$USERNAME"
-password = "$PASSWORD"
+password = "$PASSWORD"  # For Cloud: this IS the GSQL secret
 graphname = "$GRAPHNAME"
 ```
+
+**Important**: TigerGraph has two deployment types with different authentication:
+- **TigerGraph Cloud (Savannah)**: hostname contains `.tgcloud.io`, password field contains the GSQL secret
+- **Self-hosted**: traditional username/password with secret creation
+
 Usage:
 ```python
 import pyTigerGraph as tg
+import streamlit as st
 
-conn = tg.TigerGraphConnection(**st.secrets["tigergraph"])
-conn.apiToken = conn.getToken(conn.createSecret())
+@st.cache_resource
+def get_tigergraph_connection():
+    """
+    Initialize TigerGraph connection.
+    Automatically detects Cloud vs self-hosted based on hostname.
+    """
+    config = st.secrets["tigergraph"]
+    is_cloud = ".tgcloud.io" in config["host"]
+    
+    if is_cloud:
+        # TigerGraph Cloud: password IS the GSQL secret
+        conn = tg.TigerGraphConnection(
+            host=config["host"],
+            graphname=config["graphname"],
+            username=config["username"],
+            gsqlSecret=config["password"]  # Use gsqlSecret parameter for Cloud
+        )
+        # Get token using the secret
+        token = conn.getToken(config["password"])
+        conn.apiToken = token[0]
+    else:
+        # Self-hosted: use traditional authentication
+        conn = tg.TigerGraphConnection(
+            host=config["host"],
+            graphname=config["graphname"],
+            username=config["username"],
+            password=config["password"]
+        )
+        # Try to create or use existing secret
+        try:
+            secrets = conn.getSecrets()
+            if secrets:
+                secret_alias = list(secrets.keys())[0]
+                token = conn.getToken(secret_alias)
+            else:
+                secret = conn.createSecret()
+                token = conn.getToken(secret)
+            conn.apiToken = token[0]
+        except Exception as e:
+            # Handle cases where user lacks secret creation permissions
+            st.warning(f"Could not authenticate: {e}")
+    
+    return conn
 
+conn = get_tigergraph_connection()
+
+# Query data with caching
 @st.cache_data(ttl=600)
-def get_data():
-    result = conn.runInstalledQuery("queryName")[0]
+def get_data(_conn, query_name):
+    result = _conn.runInstalledQuery(query_name)[0]
     return result
 
-data = get_data()
+data = get_data(conn, "queryName")
 ```
 
 ### openai
