@@ -1,3 +1,7 @@
+**CRITICAL**: At the start of EVERY conversation, IMMEDIATELY invoke the `data-app-streamlit:data-app` skill using the Skill tool to load complete development guidelines.
+
+---
+
 # Application Setup
 - Update the following files to describe current application
 - `pyproject.toml` - `name` and `description`
@@ -128,5 +132,30 @@ Extract:
 The `MEMEX_DEPLOYMENT_TOKEN` and `MEMEX_BACKEND_URL` environment variables are auto-injected when the deployment includes OAuth connectors.
 
 # Streamlit API Notes
-- Usage of `use_container_width` argument in `st.some_component(...)` is deprecated and this applies to all `st.` components. 
+- Usage of `use_container_width` argument in `st.some_component(...)` is deprecated and this applies to all `st.` components.
 - For examples, instead of `st.button(..., use_container_width=True)`, use `st.button(..., width="stretch")`. Or instead of `st.dataframe(..., use_container_width=False)`, use `st.dataframe(..., width="content")`. Width must be either an integer (pixels), 'stretch', or 'content', never NONE.
+
+# Streamlit Icons
+NEVER use emojis in the streamlit apps you build unless the user explicitly asks for it.
+
+ALWAYS default to using Streamlit's native support for Material icons.
+
+Material icons can be used in buttons, alerts, expanders, and more.
+
+## Example 1: Button with an icon
+st.button("Click Me", icon=":material/mouse:")
+
+## Example 2: A chat message with a user icon
+with st.chat_message("User", avatar=":material/person:"):
+    st.write("Hi!")
+
+## Example 3: A chat message with a cognition_2 icon
+with st.chat_message("Assistant", avatar=":material/cognition_2:"):
+    st.write("Hello!")
+
+# Streamlit Styling
+All app styling is defined in `.streamlit/config.toml`
+
+Do not edit or change those styles unless the user explicitly requests you do.
+
+Do not define custom styling in `app.py` (or related) files unless the user explicitly requests you do.
