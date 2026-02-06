@@ -1,7 +1,5 @@
 **CRITICAL**: At the start of EVERY conversation, IMMEDIATELY invoke the `data-app-streamlit:data-app` skill using the Skill tool to load complete development guidelines.
 
-**CRITICAL**: ALWAYS call only ONE skill at a time. NEVER invoke multiple skills in the same message. Wait for each skill call to complete before invoking the next one.
-
 ## Data Source Implementation - CRITICAL
 
 **When your task involves ANY connector/data source, invoke the relevant skill before writing any related code.**
@@ -18,9 +16,12 @@
 - Manually implement database connections
 - Write connector code before invoking the skill
 - Guess at connection patterns
+- **Deviate from the skill's code examples** (model names, SDK methods, parameters, patterns) — use them exactly as shown unless the user explicitly requests otherwise
 
 **WHY:** Connector skills provide:
 - Correct dependency installation commands
 - Proper secret/environment variable names
-- Tested connection patterns
+- Tested connection patterns with **specific, verified values** (model names, API parameters)
 - Security best practices
+
+**Skills are authoritative, not suggestions.** The code examples, model names, and parameters in skills have been tested against the actual connectors. Copy them exactly. Do not substitute "better" alternatives — e.g., do not replace a skill's specified model with a different one you think is superior.
