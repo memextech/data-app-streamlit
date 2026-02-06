@@ -2,16 +2,15 @@
 
 ## Data Source Implementation - CRITICAL
 
-**MANDATORY: When implementing ANY connector/data source:**
+**When your task involves ANY connector/data source, invoke the relevant skill before writing any related code.**
 
-1. **ALWAYS invoke the connector skill FIRST** before writing any code
-2. Check available connectors in system prompt under "Available Connectors"
-3. Invoke using: `Skill` tool with `connectors-streamlit:connector-{type}` format
+1. Check available connectors in system prompt under "Available Connectors"
+2. Invoke using: `Skill` tool with `connectors-streamlit:connector-{type}` format
 
 **Examples:**
-- Neon database → invoke `connectors-streamlit:connector-neon` skill first
-- PostgreSQL → invoke `connectors-streamlit:connector-postgresql` skill first
-- OpenAI → invoke `connectors-streamlit:connector-openai` skill first
+- Neon database → invoke `connectors-streamlit:connector-neon`
+- PostgreSQL → invoke `connectors-streamlit:connector-postgresql`
+- OpenAI → invoke `connectors-streamlit:connector-openai`
 
 **DO NOT:**
 - Manually implement database connections
