@@ -1,5 +1,7 @@
 **CRITICAL**: At the start of EVERY conversation, IMMEDIATELY invoke the `data-app-streamlit:data-app` skill using the Skill tool to load complete development guidelines.
 
+**CRITICAL**: ALWAYS call only ONE skill at a time. NEVER invoke multiple skills in the same message. Wait for each skill call to complete before invoking the next one.
+
 ## Data Source Implementation - CRITICAL
 
 **When your task involves ANY connector/data source, invoke the relevant skill before writing any related code.**
