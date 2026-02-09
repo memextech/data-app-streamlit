@@ -9,21 +9,27 @@ import httpx
 def _expand_value(value, key=None):
     """Recursively expand environment variables in values."""
     if isinstance(value, str):
-        # If string starts with $, replace with env var
         if value.startswith('$'):
-            var_name = value[1:]  # Remove the $
-            env_value = os.getenv(var_name, value)  # Return original if not found
+            var_name = value[1:]
+            env_value = os.getenv(var_name)
+            
+            if not env_value:
+                return None
 
             # Special handling for GCP private_key - convert literal \n to actual newlines
-            if key == "private_key" and env_value:
+            if key == "private_key":
                 env_value = env_value.replace("\\n", "\n")
 
             return env_value
         return value
     elif isinstance(value, dict):
-        return {k: _expand_value(v, k) for k, v in value.items()}
+        return {k: v for k, v in 
+                ((k, _expand_value(v, k)) for k, v in value.items()) 
+                if v is not None}
     elif isinstance(value, list):
-        return [_expand_value(item) for item in value]
+        return [item for item in 
+                (_expand_value(item) for item in value) 
+                if item is not None]
     else:
         return value
 
