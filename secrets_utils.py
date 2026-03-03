@@ -71,21 +71,21 @@ def get_oauth_access_token(connector_id: str) -> str:
         >>> creds = Credentials(token=access_token)
 
     Note:
-        MEMEX_DEPLOYMENT_TOKEN and MEMEX_BACKEND_URL are auto-injected
+        WORKSHOP_DEPLOYMENT_TOKEN and WORKSHOP_BACKEND_URL are auto-injected
         by the deployment system when OAuth connectors are included in
         the deployment. No manual configuration is needed.
     """
-    token = os.environ.get("MEMEX_DEPLOYMENT_TOKEN")
-    backend_url = os.environ.get("MEMEX_BACKEND_URL")
+    token = os.environ.get("WORKSHOP_DEPLOYMENT_TOKEN")
+    backend_url = os.environ.get("WORKSHOP_BACKEND_URL")
 
     if not token:
         raise ValueError(
-            "MEMEX_DEPLOYMENT_TOKEN not set. "
+            "WORKSHOP_DEPLOYMENT_TOKEN not set. "
             "Ensure OAuth connectors are included in the deployment."
         )
     if not backend_url:
         raise ValueError(
-            "MEMEX_BACKEND_URL not set. "
+            "WORKSHOP_BACKEND_URL not set. "
             "Ensure OAuth connectors are included in the deployment."
         )
 
