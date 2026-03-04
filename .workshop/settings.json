@@ -1,0 +1,6 @@
+{
+  "enabledPlugins": {
+    "connectors-streamlit@workshop-plugins": true,
+    "data-app-streamlit@workshop-plugins": true
+  }
+}

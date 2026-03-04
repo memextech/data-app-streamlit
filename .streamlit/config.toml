@@ -1,4 +1,4 @@
-# Memex Streamlit Theme
+# Workshop Streamlit Theme
 
 [server]
 enableStaticServing = true
@@ -26,7 +26,7 @@ headingFontSizes = ["40px", "32px", "24px"]
 headingFontWeights = 500
 
 # ============================================================================
-# MEMEX LIGHT THEME
+# WORKSHOP LIGHT THEME
 # ============================================================================
 
 [theme.light]
@@ -44,7 +44,7 @@ backgroundColor = "#e5e5e5"
 secondaryBackgroundColor = "#fafafa"
 
 # ============================================================================
-# MEMEX DARK THEME
+# WORKSHOP DARK THEME
 # ============================================================================
 
 [theme.dark]

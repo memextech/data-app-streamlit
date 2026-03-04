@@ -1,6 +1,0 @@
-{
-  "enabledPlugins": {
-    "connectors-streamlit@memex-plugins": true,
-    "data-app-streamlit@memex-plugins": true
-  }
-}
