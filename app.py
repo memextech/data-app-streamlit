@@ -5,8 +5,8 @@ from secrets_utils import setup_secrets
 setup_secrets()
 
 st.set_page_config(
-    page_title="Data App", layout="wide", initial_sidebar_state="collapsed"
+    page_title="Streamlit App", layout="wide", initial_sidebar_state="collapsed"
 )
 
-st.title("Welcome")
+st.title("Welcome to your Streamlit App")
 st.markdown("Start building something amazing.")
