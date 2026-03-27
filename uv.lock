@@ -1,6 +1,10 @@
 version = 1
-revision = 2
+revision = 3
 requires-python = ">=3.12"
+
+[options]
+exclude-newer = "2026-03-20T20:13:19.499319Z"
+exclude-newer-span = "P7D"
 
 [[package]]
 name = "altair"
@@ -235,12 +239,12 @@ dependencies = [
 
 [package.metadata]
 requires-dist = [
-    { name = "httpx", specifier = ">=0.27.0" },
-    { name = "matplotlib", specifier = ">=3.10.8" },
-    { name = "numpy", specifier = ">=2.3.5" },
-    { name = "pandas", specifier = ">=2.3.3" },
-    { name = "plotly", specifier = ">=6.5.0" },
-    { name = "streamlit", specifier = ">=1.52.1" },
+    { name = "httpx", specifier = "==0.28.1" },
+    { name = "matplotlib", specifier = "==3.10.8" },
+    { name = "numpy", specifier = "==2.3.5" },
+    { name = "pandas", specifier = "==2.3.3" },
+    { name = "plotly", specifier = "==6.5.0" },
+    { name = "streamlit", specifier = "==1.52.2" },
 ]
 
 [[package]]
