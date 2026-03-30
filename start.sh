@@ -1,7 +1,12 @@
 #!/bin/bash
 set -e
 
+# Port conflict guard — active in Workshop sandbox, skipped elsewhere
 APP_PORT=${APP_PORT:-8501}
+if [ -f /usr/local/lib/workshop-devguard.sh ]; then
+    source /usr/local/lib/workshop-devguard.sh
+    devguard_acquire "$APP_PORT"
+fi
 
 # Startup timing
 T0=$(date +%s%3N 2>/dev/null || python3 -c "import time;print(int(time.time()*1000))")
