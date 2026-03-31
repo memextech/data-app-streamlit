@@ -1,7 +1,12 @@
 #!/bin/bash
 set -e
 
+# Port conflict guard — active in Workshop sandbox, skipped elsewhere
 APP_PORT=${APP_PORT:-8501}
+if [ -f /usr/local/lib/workshop-devguard.sh ]; then
+    source /usr/local/lib/workshop-devguard.sh
+    devguard_acquire "$APP_PORT"
+fi
 
 # Startup timing
 T0=$(date +%s%3N 2>/dev/null || python3 -c "import time;print(int(time.time()*1000))")
@@ -11,7 +16,7 @@ elapsed() { echo $(( $(date +%s%3N 2>/dev/null || python3 -c "import time;print(
 UV_HASH=$(md5sum uv.lock 2>/dev/null | cut -d' ' -f1)
 if [ ! -f ".venv/.uv-hash-$UV_HASH" ]; then
   echo "[+$(elapsed)ms] uv sync starting..."
-  uv sync --compile-bytecode --frozen 2>&1 || uv sync --compile-bytecode 2>&1
+  uv sync --compile-bytecode --frozen
   rm -f .venv/.uv-hash-* 2>/dev/null
   touch ".venv/.uv-hash-$UV_HASH"
   echo "[+$(elapsed)ms] uv sync done"
