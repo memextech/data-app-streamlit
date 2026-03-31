@@ -16,7 +16,7 @@ elapsed() { echo $(( $(date +%s%3N 2>/dev/null || python3 -c "import time;print(
 UV_HASH=$(md5sum uv.lock 2>/dev/null | cut -d' ' -f1)
 if [ ! -f ".venv/.uv-hash-$UV_HASH" ]; then
   echo "[+$(elapsed)ms] uv sync starting..."
-  uv sync --compile-bytecode --frozen 2>&1 || uv sync --compile-bytecode 2>&1
+  uv sync --compile-bytecode --frozen
   rm -f .venv/.uv-hash-* 2>/dev/null
   touch ".venv/.uv-hash-$UV_HASH"
   echo "[+$(elapsed)ms] uv sync done"
