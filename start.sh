@@ -25,4 +25,4 @@ else
 fi
 
 echo "[+$(elapsed)ms] Starting Streamlit app on http://localhost:${APP_PORT}"
-exec uv run streamlit run app.py --server.port=${APP_PORT} --server.headless=true
+exec uv run --frozen streamlit run app.py --server.port=${APP_PORT} --server.headless=true
