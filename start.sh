@@ -16,7 +16,7 @@ elapsed() { echo $(( $(date +%s%3N 2>/dev/null || python3 -c "import time;print(
 UV_HASH=$(md5sum uv.lock 2>/dev/null | cut -d' ' -f1)
 if [ ! -f ".venv/.uv-hash-$UV_HASH" ]; then
   echo "[+$(elapsed)ms] uv sync starting..."
-  uv sync --compile-bytecode --frozen
+  uv sync --compile-bytecode --frozen || uv sync --compile-bytecode
   rm -f .venv/.uv-hash-* 2>/dev/null
   touch ".venv/.uv-hash-$UV_HASH"
   echo "[+$(elapsed)ms] uv sync done"
@@ -25,4 +25,4 @@ else
 fi
 
 echo "[+$(elapsed)ms] Starting Streamlit app on http://localhost:${APP_PORT}"
-exec uv run --frozen streamlit run app.py --server.port=${APP_PORT} --server.headless=true
+exec uv run streamlit run app.py --server.port=${APP_PORT} --server.headless=true
