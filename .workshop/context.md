@@ -1,3 +1,5 @@
+**CRITICAL**: At the start of EVERY conversation, IMMEDIATELY invoke the `data-app-streamlit:data-app` skill using the Skill tool to load complete development guidelines.
+
 ## Data Source Implementation - CRITICAL
 
 **When your task involves ANY connector/data source, invoke the relevant skill before writing any related code.**
