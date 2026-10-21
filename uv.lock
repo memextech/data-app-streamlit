@@ -7,8 +7,8 @@ exclude-newer = "2026-10-07T13:36:55.414612Z"
 exclude-newer-span = "P14D"
 
 [options.exclude-newer-package]
-certifi = "2026-10-21T23:00:00Z"
-workshop-connect = "2027-01-02T00:00:00Z"
+certifi = "2026-10-21T00:00:00Z"
+workshop-connect = "2027-01-01T00:00:00Z"
 
 [[package]]
 name = "altair"

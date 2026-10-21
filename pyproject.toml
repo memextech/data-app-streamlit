@@ -18,4 +18,4 @@ exclude-newer = "14 days"
 # workshop-connect is published by us; exempt from the rolling window.
 # certifi 2026.10.19 drops the compromised emSign ECC Root CA - G3
 # (GHSA-6q48-6c7w-9gw2); security exception to the rolling window.
-exclude-newer-package = { workshop-connect = "2027-01-01", certifi = "2026-10-21" }
+exclude-newer-package = { workshop-connect = "2027-01-01T00:00:00Z", certifi = "2026-10-21T00:00:00Z" }
